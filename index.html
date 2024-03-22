@@ -9,10 +9,14 @@
 <style>
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+#Splash{width: 150pt; height: 150pt; position: absolute; padding: 5pt; display: flex;}
 </style>
 </head>
 <body>
 <div id="map"></div>
+<div id ='Splash'>
+    <img class='logo2' src='https://hurricaneut.maps.arcgis.com/sharing/rest/content/items/2223cf1ae5a24e299ae302a704d2b8e1/data'></img>
+</div>
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoiYnJob2xtZXMxMCIsImEiOiJzRG9nY3JrIn0.dsqKQYo38X9n5NlIhPEsGA';
     const map = new mapboxgl.Map({
@@ -22,6 +26,10 @@ body { margin: 0; padding: 0; }
         pitch: 75,
         style: 'mapbox://styles/brholmes10/clu09rc5o002901pd1qqe7l33',
     });
+
+     // Add zoom and rotation controls to the map.
+     map.addControl(new mapboxgl.NavigationControl());
+
     map.on('style.load', () => {
         map.setFog({}); // Set the default atmosphere style
 
