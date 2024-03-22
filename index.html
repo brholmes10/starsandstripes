@@ -10,6 +10,20 @@
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 #Splash{width: 75pt; height: 75pt; position: absolute; padding: 5pt; display: flex;}
+#fly {
+        display: block;
+        position: relative;
+        margin: 0px auto;
+        width: 10%;
+        height: 40px;
+        padding: 10px;
+        border: none;
+        border-radius: 3px;
+        font-size: 12px;
+        text-align: center;
+        color: #fff;
+        background: #ee8a65;
+}
 </style>
 </head>
 <body>
@@ -17,6 +31,8 @@ body { margin: 0; padding: 0; }
 <div id ='Splash'>
     <img class='logo2' src='https://hurricaneut.maps.arcgis.com/sharing/rest/content/items/2223cf1ae5a24e299ae302a704d2b8e1/data'></img>
 </div>
+<br>
+<button id="fly">First Aid Station</button>
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoiYnJob2xtZXMxMCIsImEiOiJzRG9nY3JrIn0.dsqKQYo38X9n5NlIhPEsGA';
     const map = new mapboxgl.Map({
@@ -28,6 +44,18 @@ body { margin: 0; padding: 0; }
         interactive: true,
         cooperativeGestures: false
     });
+    const start = {
+        center: [-113.37739665948415, 37.113400530991406],
+        zoom: 13,
+        pitch: 0,
+        bearing: 0
+    };
+    const end = {
+        center: [-113.3885537765956, 37.118156060003464],
+        zoom: 15,
+        bearing: 130,
+        pitch: 75
+    };
 
      // Add zoom and rotation controls to the map.
      map.addControl(new mapboxgl.NavigationControl());
@@ -43,6 +71,22 @@ body { margin: 0; padding: 0; }
             'maxzoom': 14
         });
         map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
+    });
+
+    let isAtStart = true;
+
+    document.getElementById('fly').addEventListener('click', () => {
+        // depending on whether we're currently at point a or b,
+        // aim for point a or b
+        const target = isAtStart ? end : start;
+        isAtStart = !isAtStart;
+
+        map.flyTo({
+            ...target, // Fly to the selected target
+            duration: 12000, // Animate over 12 seconds
+            essential: true // This animation is considered essential with
+            //respect to prefers-reduced-motion
+        });
     });
 
 
