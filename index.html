@@ -6,24 +6,48 @@
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+<script src="https://kit.fontawesome.com/3f13e0e5b2.js" crossorigin="anonymous"></script>
 <style>
 body { margin: 0; padding: 0; }
 #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 #Splash{width: 75pt; height: 75pt; position: absolute; padding: 5pt; display: flex;}
-#fly {
-        display: block;
-        position: relative;
-        margin: 0px auto;
-        width: 10%;
-        height: 40px;
-        padding: 10px;
-        border: none;
-        border-radius: 3px;
-        font-size: 12px;
-        text-align: center;
-        color: #fff;
-        background: #ee8a65;
+.button-container {
+    position: fixed;
+    top: 175px; /* Adjust as needed */
+    right: 1.5px; /* Adjust as needed */
 }
+.popup {
+    width: 200px;
+    background: #ffff;
+    border-radius: 6px;
+    position: absolute;
+    bottom: 02%;
+    left: 2%;
+    transform: translate(-50%, -50% scale(0.1));
+    text-align: center;
+    padding: 0 30px 30px;
+    /* color: #3333; */
+    visibility: hidden;
+    transition: transform 0.4s, top 0.4s;
+}
+.open-popup{
+    visibility: visible;
+    bottom: 5%;
+    transform: translate(-50%, -50% scale(1));
+}
+
+.popup button {
+    width: 100%;
+    margin-top: 50px;
+    padding: 10px 0;
+    background-color: #6fd649;
+    outline: none;
+    font-size: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0, 0.2);
+}
+
 </style>
 </head>
 <body>
@@ -31,10 +55,26 @@ body { margin: 0; padding: 0; }
 <div id ='Splash'>
     <img class='logo2' src='https://hurricaneut.maps.arcgis.com/sharing/rest/content/items/2223cf1ae5a24e299ae302a704d2b8e1/data'></img>
 </div>
-<br>
-<button id="fly">First Aid Station</button>
+<div class="button-container">
+    <div class="mapboxgl-ctrl-top-right">
+        <div class="mapboxgl-ctrl mapboxgl-ctrl-group">
+            <button class="test" aria-label="Toggle fullscreen" type="button" onclick="openPopup()"><i class="fa-solid fa-layer-group"></i></button>
+        </div>
+    </div>
+</div>
+
+<div class="popup" id="popup">
+    <i class="fa-solid fa-suitcase-medical">  First Aid Station</i>
+    <br>
+    <p></p>
+    <i class="fa-solid fa-suitcase-medical">  First Aid Station</i>
+    <!-- <button onclick="closePopup()">Close</button> -->
+</div>
+
+
 <script>
 	mapboxgl.accessToken = 'pk.eyJ1IjoiYnJob2xtZXMxMCIsImEiOiJzRG9nY3JrIn0.dsqKQYo38X9n5NlIhPEsGA';
+    
     const map = new mapboxgl.Map({
         container: 'map', // container ID
         center: [-113.37739665948415, 37.113400530991406], // starting position [lng, lat]
@@ -44,21 +84,17 @@ body { margin: 0; padding: 0; }
         interactive: true,
         cooperativeGestures: false
     });
-    const start = {
-        center: [-113.37739665948415, 37.113400530991406],
-        zoom: 13,
-        pitch: 0,
-        bearing: 0
-    };
-    const end = {
-        center: [-113.3885537765956, 37.118156060003464],
-        zoom: 19,
-        bearing: 130,
-        pitch: 20
-    };
 
      // Add zoom and rotation controls to the map.
      map.addControl(new mapboxgl.NavigationControl());
+     map.addControl(new mapboxgl.FullscreenControl({container: document.querySelector('body')}));
+     map.addControl(new mapboxgl.GeolocateControl({
+        positionOptions: {
+            enableHighAccuracy: true
+        },
+        trackUserLocation: true,
+        showUserHeading: true
+    }));
 
     map.on('style.load', () => {
         map.setFog({}); // Set the default atmosphere style
@@ -73,21 +109,12 @@ body { margin: 0; padding: 0; }
         map.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
     });
 
-    let isAtStart = true;
-
-    document.getElementById('fly').addEventListener('click', () => {
-        // depending on whether we're currently at point a or b,
-        // aim for point a or b
-        const target = isAtStart ? end : start;
-        isAtStart = !isAtStart;
-
-        map.flyTo({
-            ...target, // Fly to the selected target
-            duration: 12000, // Animate over 12 seconds
-            essential: true // This animation is considered essential with
-            //respect to prefers-reduced-motion
-        });
-    });
+    function openPopup(){
+        document.getElementById("popup").classList.toggle("open-popup");
+    }
+    function closePopup(){
+        document.getElementById("popup").classList.toggle("open-popup");
+    }
 
 
 
